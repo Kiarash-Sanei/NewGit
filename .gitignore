@@ -1,5 +1,6 @@
 *.exe
-*.txt
+c*.txt
+g*.txt
 test.c
 NewGit
 .NewGit

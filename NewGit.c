@@ -25,7 +25,24 @@ int main(int argc , char** argv)
                 return SUCCEED;
             }
         }
+        if(argc != 4)
+        {
+            INVALID_INPUT_ERROR
+            return ERROR;
+        }
         if(add_configuration_loacal(argv[2] , argv[3]) == ERROR)
+        {
+            return ERROR;
+        }
+    }
+    else if(strcmp(argv[1] , "init") == 0)
+    {
+        if(argc != 2)
+        {
+            INVALID_INPUT_ERROR
+            return ERROR;
+        }
+        if(NewGit_maker() != SUCCEED)
         {
             return ERROR;
         }
