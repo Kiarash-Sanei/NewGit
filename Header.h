@@ -21,7 +21,11 @@
 #define DIRECTORY_OPENING_ERROR puts("Opening directory failed!");
 #define NewGit_EXISTENCE_ERROR puts("You haven't initialized NewGit here!");
 #define INVALID_INPUT_ERROR puts("You have entered invalid input!");
+#define NewGit_ALREADY_EXIST_IN_CURRENT_DIRECTORY puts("You have already initialized NewGit in current directory!");
+#define NewGit_ALREADY_EXIST_IN_PARENT_DIRECTORY puts("You have already initialized NewGit in one of the parent directories of current directory!");
 
+//Massages:
+#define SUCCESS_MASSAGE(word) printf("%s is done successfully!\n", word);
 //Define Functions
 
 //Structs:
