@@ -36,12 +36,12 @@ int add_configuration_global(char* option , char* input)
 }
 int add_configuration_loacal(char* option , char* input)
 {
-    if(NewGit_finder() == NULL)
+    char* path = NewGit_finder();
+    if(path == NULL)
     {
         NewGit_EXISTENCE_ERROR
         return ERROR;
     }
-    char* path = NewGit_finder();
     if(strcmp(option , "user.name") == 0)
     {
         strcat(path , "/.NewGit/Configuration/localName.txt");

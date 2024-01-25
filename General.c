@@ -24,13 +24,15 @@ char* NewGit_finder()
             DIRECTORY_OPENING_ERROR
             return NULL;
         }
-        while((entry = readdir(directory)) != NULL)
+        entry = readdir(directory);
+        while(entry != NULL)
         {
             if((entry -> d_type == DT_DIR) && (strcmp(entry -> d_name , ".NewGit") == 0))
             {
                 exist = true;
                 goto end;
             }
+            entry = readdir(directory);
         }
         closedir(directory);
         if(strcmp(temporary_directory , "/") != 0)
@@ -61,4 +63,26 @@ char* NewGit_finder()
         {
             return NULL;
         }
+}
+int copy(char* file_name_destenation , char* file_name_source)
+{
+    FILE* file_source = fopen(file_name_source , "r");
+    if(file_source == NULL)
+    {
+        return ERROR;
+    }
+    FILE* file_destination = fopen(file_name_destenation , "w");
+    char c = fgetc(file_source);  
+    while(c != EOF)
+    {
+        fprintf(file_destination , "%c" , c); 
+        c = fgetc(file_source);
+    }
+    fclose(file_source);
+    fclose(file_destination);
+    return SUCCEED;
+}
+int config_check()
+{
+    
 }

@@ -47,4 +47,30 @@ int main(int argc , char** argv)
             return ERROR;
         }
     }
+    else if(strcmp(argv[1] , "add") == 0)
+    {
+        if(strcmp(argv[2] , "-f") == 0)
+        {
+            puts("0");
+        }
+        if(strcmp(argv[2] , "-n") == 0)
+        {
+            puts("1");
+        }
+        if(strcmp(argv[2] , "-redo") == 0)
+        {
+            puts("2");
+        }
+        if(argc == 3)
+        {
+            if(opendir(argv[2]) == NULL)
+            {
+                stage_file(argv[2]);
+            }
+            else
+            {
+                stage_directory(argv[2]);
+            }
+        }
+    }
 }

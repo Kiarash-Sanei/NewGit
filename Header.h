@@ -22,6 +22,8 @@
 #define DIRECTORY_OPENING_ERROR puts("Opening directory failed!");
 #define DIRECTORY_CREATING_ERROR puts("Creating directory failed!");
 #define NewGit_EXISTENCE_ERROR puts("You haven't initialized NewGit here!");
+#define FILE_EXISTENCE_ERROR puts("You have entered a file name that does not exist in the current directory!");
+#define DIRECTORY_EXISTENCE_ERROR puts("You have entered a directory name that does not exist in the current directory!");
 #define INVALID_INPUT_ERROR puts("You have entered invalid input!");
 #define INVALID_COMMAND_ERROR puts("You have entered invalid command!");
 #define NewGit_ALREADY_EXIST_IN_CURRENT_DIRECTORY puts("You have already initialized NewGit in current directory!");
@@ -29,6 +31,7 @@
 
 //Massages:
 #define SUCCESS_MASSAGE(word) printf("%s is done successfully!\n", word);
+#define FAIL_MASSAGE(word) printf("%s failed!\n", word);
 //Define Functions:
 
 //Structs:
@@ -39,8 +42,12 @@ typedef struct dirent dirent;
 //Prototypes:
 //General:
 char* NewGit_finder();
+int copy(char* , char*);
 //Initializing:
 int NewGit_maker();
 //Configuration:
 int add_configuration_global(char* , char*);
 int add_configuration_loacal(char* , char*);
+//Add:
+int stage_file(char*);//cann't handle same file name
+int stage_directory(char*);//cann't handle same file name
