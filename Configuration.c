@@ -5,7 +5,7 @@ int add_configuration_global(char* option , char* input)
     if(strcmp(option , "user.name") == 0)
     {
         FILE* file = fopen("/home/kiarash-sanei/Desktop/NewGit/Configuration/globalName.txt" , "w");
-        fprintf(file , "%s" , input);
+        fprintf(file , "%s\n" , input);
         fclose(file);
         SUCCESS_MASSAGE("Adding global name")
         return SUCCEED;
@@ -13,7 +13,7 @@ int add_configuration_global(char* option , char* input)
     else if(strcmp(option , "user.email") == 0)
     {
         FILE* file = fopen("/home/kiarash-sanei/Desktop/NewGit/Configuration/globalEmail.txt" , "w");
-        fprintf(file , "%s" , input);
+        fprintf(file , "%s\n" , input);
         fclose(file);
         SUCCESS_MASSAGE("Adding global email")
         return SUCCEED;
@@ -46,7 +46,7 @@ int add_configuration_loacal(char* option , char* input)
     {
         strcat(path , "/.NewGit/Configuration/localName.txt");
         FILE* file = fopen(path , "w");
-        fprintf(file , "%s" , input);
+        fprintf(file , "%s\n" , input);
         fclose(file);
         SUCCESS_MASSAGE("Adding local name")
         return SUCCEED;
@@ -55,7 +55,7 @@ int add_configuration_loacal(char* option , char* input)
     {
         strcat(path , "/.NewGit/Configuration/localEmail.txt");
         FILE* file = fopen(path , "w");
-        fprintf(file , "%s" , input);
+        fprintf(file , "%s\n" , input);
         fclose(file);
         SUCCESS_MASSAGE("Adding local email")
         return SUCCEED;

@@ -11,16 +11,19 @@
 //Numbers:
 #define MAX_FILE_NAME_LENGTH 1000
 #define MAX_DIRECTORY_NAME_LENGTH 1000
+#define MAX_COMMAND_LENGTH 2000
 #define MAX_COMMIT_MESSAGE_LENGTH 2000
 #define MAX_LINE_LENGTH 1000
 #define ERROR -1
 #define SUCCEED 1
 #define FAILED 0
 #define ACCESS 0777
+#define MODIFIED 2
 
 //Errors:
 #define DIRECTORY_OPENING_ERROR puts("Opening directory failed!");
 #define DIRECTORY_CREATING_ERROR puts("Creating directory failed!");
+#define FILE_OPENING_ERROR puts("Opening file failed!");
 #define NewGit_EXISTENCE_ERROR puts("You haven't initialized NewGit here!");
 #define FILE_EXISTENCE_ERROR puts("You have entered a file name that does not exist in the current directory!");
 #define DIRECTORY_EXISTENCE_ERROR puts("You have entered a directory name that does not exist in the current directory!");
@@ -32,6 +35,7 @@
 //Massages:
 #define SUCCESS_MASSAGE(word) printf("%s is done successfully!\n", word);
 #define FAIL_MASSAGE(word) printf("%s failed!\n", word);
+#define EXISTENCE_ERROR_MASSAGE(word) printf("%s does not exist in the current directory!\n", word);
 //Define Functions:
 
 //Structs:
@@ -42,7 +46,10 @@ typedef struct dirent dirent;
 //Prototypes:
 //General:
 char* NewGit_finder();
-int copy(char* , char*);
+int copy_file(char* , char* , char*);
+int file_content_checker(char* , char*);
+int stage_checker_complete(char* , char*);
+int stage_checker_name(char*);
 //Initializing:
 int NewGit_maker();
 //Configuration:
@@ -50,4 +57,6 @@ int add_configuration_global(char* , char*);
 int add_configuration_loacal(char* , char*);
 //Add:
 int stage_file(char*);//cann't handle same file name
-int stage_directory(char*);//cann't handle same file name
+int stage_directory(char* , char* , char*);//cann't handle same file name
+int show(int , char*);//cann't handle same file name
+int redo(char* , char* , char*);//doesn't work

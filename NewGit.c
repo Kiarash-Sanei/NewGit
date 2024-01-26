@@ -51,15 +51,58 @@ int main(int argc , char** argv)
     {
         if(strcmp(argv[2] , "-f") == 0)
         {
-            puts("0");
+            for(int i = 0 ; i < argc - 3 ; i++)
+            {
+                if(opendir(argv[i + 3]) == NULL)
+                {
+                    stage_file(argv[i + 3]);
+                }
+                else
+                {
+                    char current_directory[MAX_DIRECTORY_NAME_LENGTH];
+                    if(getcwd(current_directory , MAX_DIRECTORY_NAME_LENGTH) == NULL)
+                    {
+                        DIRECTORY_OPENING_ERROR
+                        return ERROR;
+                    }
+                    char main_directory[MAX_DIRECTORY_NAME_LENGTH];
+                    if(getcwd(main_directory , MAX_DIRECTORY_NAME_LENGTH) == NULL)
+                    {
+                        DIRECTORY_OPENING_ERROR
+                        return ERROR;
+                    }
+                    stage_directory(argv[i + 3] , current_directory , main_directory);
+                }
+            }
         }
         if(strcmp(argv[2] , "-n") == 0)
         {
-            puts("1");
+            char current_directory[MAX_DIRECTORY_NAME_LENGTH];
+            if(getcwd(current_directory , MAX_DIRECTORY_NAME_LENGTH) == NULL)
+            {
+                DIRECTORY_OPENING_ERROR
+                return ERROR;
+            }
+            puts("FILE NAME ---- STATUS");
+            show(atoi(argv[3]) , current_directory);
         }
         if(strcmp(argv[2] , "-redo") == 0)
         {
-            puts("2");
+            char current_directory[MAX_DIRECTORY_NAME_LENGTH];
+            if(getcwd(current_directory , MAX_DIRECTORY_NAME_LENGTH) == NULL)
+            {
+                DIRECTORY_OPENING_ERROR
+                return ERROR;
+            }
+            char main_directory[MAX_DIRECTORY_NAME_LENGTH];
+            if(getcwd(main_directory , MAX_DIRECTORY_NAME_LENGTH) == NULL)
+            {
+                DIRECTORY_OPENING_ERROR
+                return ERROR;
+            }
+            char directory_name[MAX_DIRECTORY_NAME_LENGTH]; 
+            strcpy(directory_name , strrchr(main_directory , '/') + 1);
+            redo(directory_name , current_directory , main_directory);
         }
         if(argc == 3)
         {
@@ -69,7 +112,19 @@ int main(int argc , char** argv)
             }
             else
             {
-                stage_directory(argv[2]);
+                char current_directory[MAX_DIRECTORY_NAME_LENGTH];
+                if(getcwd(current_directory , MAX_DIRECTORY_NAME_LENGTH) == NULL)
+                {
+                    DIRECTORY_OPENING_ERROR
+                    return ERROR;
+                }
+                char main_directory[MAX_DIRECTORY_NAME_LENGTH];
+                if(getcwd(main_directory , MAX_DIRECTORY_NAME_LENGTH) == NULL)
+                {
+                    DIRECTORY_OPENING_ERROR
+                    return ERROR;
+                }
+                stage_directory(argv[2] , current_directory , main_directory);
             }
         }
     }
