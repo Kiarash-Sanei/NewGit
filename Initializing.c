@@ -36,7 +36,6 @@ int NewGit_maker()
             DIRECTORY_OPENING_ERROR
             return ERROR;
         }
-        SUCCESS_MASSAGE("Initializing")
         return SUCCEED;
     }
     else if(strcmp(path , current_directory) == 0)

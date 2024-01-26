@@ -21,7 +21,18 @@ int stage_file(char* file_name)
         DIRECTORY_OPENING_ERROR
         return ERROR;
     }
-    copy_file(stage_path , current_directory , file_name);
+    if(copy_file(stage_path , current_directory , file_name) == ERROR)
+    {
+        char massage[strlen(file_name) + 9];
+        strcpy(massage , "Stagging ");
+        strcat(massage , file_name);
+        FAIL_MASSAGE(massage)
+        return ERROR;
+    }
+    fclose(file);
+    strcat(stage_path , "/.NewGit/stageLog.txt");
+    file = fopen(stage_path , "a");
+    fprintf(file , "%s\n" , file_name);
     fclose(file);
     free(stage_path);
     char massage[strlen(file_name) + 9];
@@ -61,6 +72,10 @@ int stage_directory(char* directory_name , char* current_directory , char* main_
                 FAIL_MASSAGE(massage)
                 return ERROR;
             }
+            strcat(stage_path , "/.NewGit/stageLog.txt");
+            FILE* file = fopen(stage_path , "a");
+            fprintf(file , "%s\n" , entry -> d_name);
+            fclose(file);
             char massage[strlen(entry -> d_name) + 9];
             strcpy(massage , "Stagging ");
             strcat(massage , entry -> d_name);
@@ -129,52 +144,7 @@ int show(int depth , char* current_directory)
     closedir(directory);
     return SUCCEED;
 }
-int redo(char* directory_name , char* current_directory , char* main_directory)
+int redo()
 {
-    char* stage_path = NewGit_finder();
-    if(stage_path == NULL)
-    {
-        NewGit_EXISTENCE_ERROR
-        return ERROR;
-    }
-    chdir("..");
-    DIR* directory = opendir(directory_name);
-    if(directory == NULL)
-    {
-        DIRECTORY_EXISTENCE_ERROR
-        EXISTENCE_ERROR_MASSAGE(directory_name)
-        return ERROR;
-    }
-    dirent* entry = readdir(directory);
-    while(entry != NULL)
-    {
-        puts(entry -> d_name);
-        if(entry -> d_type == DT_REG)
-        {
-            if(stage_checker_name(entry -> d_name) == SUCCEED)
-            {
-                if(copy_file(stage_path , current_directory , entry -> d_name) == ERROR)
-                {
-                    char massage[strlen(directory_name) + 9];
-                    strcpy(massage , "Stagging ");
-                    strcat(massage , directory_name);
-                    FAIL_MASSAGE(massage)
-                    return ERROR;
-                }
-                char massage[strlen(entry -> d_name) + 9];
-                strcpy(massage , "Stagging ");
-                strcat(massage , entry -> d_name);
-                SUCCESS_MASSAGE(massage)
-            }
-        }
-        else if((entry -> d_type == DT_DIR) && (strcmp(entry -> d_name , ".") != 0) && (strcmp(entry -> d_name , "..") != 0) && (strcmp(entry -> d_name , ".NewGit") != 0))
-        {
-            stage_directory(entry -> d_name , current_directory , main_directory);
-        }
-        entry = readdir(directory);
-    }
-    closedir(directory);
-    free(stage_path);
-    chdir(main_directory);
-    return SUCCEED;
+
 }

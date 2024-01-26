@@ -12,8 +12,11 @@
 #define MAX_FILE_NAME_LENGTH 1000
 #define MAX_DIRECTORY_NAME_LENGTH 1000
 #define MAX_COMMAND_LENGTH 2000
+#define MAX_UNDO_LENGTH 2000
+#define MAX_BRANCH_NAME 100
 #define MAX_COMMIT_MESSAGE_LENGTH 2000
 #define MAX_LINE_LENGTH 1000
+#define MAX_WORD_LENGTH 100
 #define ERROR -1
 #define SUCCEED 1
 #define FAILED 0
@@ -31,6 +34,8 @@
 #define INVALID_COMMAND_ERROR puts("You have entered invalid command!");
 #define NewGit_ALREADY_EXIST_IN_CURRENT_DIRECTORY puts("You have already initialized NewGit in current directory!");
 #define NewGit_ALREADY_EXIST_IN_PARENT_DIRECTORY puts("You have already initialized NewGit in one of the parent directories of current directory!");
+#define FILE_EXISTENCE_ERROR_IN_STAGE puts("You have entered a file name that does not exist in the stage!");
+#define LACK_OF_ADD puts("You haven't add any file yet!");
 
 //Massages:
 #define SUCCESS_MASSAGE(word) printf("%s is done successfully!\n", word);
@@ -50,6 +55,7 @@ int copy_file(char* , char* , char*);
 int file_content_checker(char* , char*);
 int stage_checker_complete(char* , char*);
 int stage_checker_name(char*);
+int delete_file(char* , char*);
 //Initializing:
 int NewGit_maker();
 //Configuration:
@@ -59,4 +65,8 @@ int add_configuration_loacal(char* , char*);
 int stage_file(char*);//cann't handle same file name
 int stage_directory(char* , char* , char*);//cann't handle same file name
 int show(int , char*);//cann't handle same file name
-int redo(char* , char* , char*);//doesn't work
+int redo();//doesn't work
+//Reset:
+int reset_file(char*);
+int reset_directory(char* , char* , char*);
+int undo();
