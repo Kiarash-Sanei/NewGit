@@ -117,13 +117,9 @@ int show(int depth , char* current_directory)
     {
         if(entry -> d_type == DT_REG)
         {
-            if(stage_checker_complete(entry -> d_name , current_directory) == SUCCEED)
+            if(stage_checker_name(entry -> d_name) == SUCCEED)
             {
                 printf("%s ---- Stagged\n", entry -> d_name);
-            }
-            else if(stage_checker_complete(entry -> d_name , current_directory) == MODIFIED)
-            {
-                printf("%s ---- Unstagged Modified\n", entry -> d_name);
             }
             else
             {

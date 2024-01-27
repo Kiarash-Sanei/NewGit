@@ -14,9 +14,10 @@
 #define MAX_COMMAND_LENGTH 2000
 #define MAX_UNDO_LENGTH 2000
 #define MAX_BRANCH_NAME 100
-#define MAX_COMMIT_MESSAGE_LENGTH 2000
+#define MAX_COMMIT_MESSAGE_LENGTH 73
 #define MAX_LINE_LENGTH 1000
 #define MAX_WORD_LENGTH 100
+#define MAX_FILE_COUNT 100
 #define ERROR -1
 #define SUCCEED 1
 #define FAILED 0
@@ -67,6 +68,8 @@ int stage_directory(char* , char* , char*);//cann't handle same file name
 int show(int , char*);//cann't handle same file name
 int redo();//doesn't work
 //Reset:
-int reset_file(char*);
-int reset_directory(char* , char* , char*);
+int reset_file(char*);//if you use this undo cann't be done
+int reset_directory(char* , char* , char*);//if you use this undo cann't be done
 int undo();
+//Status:
+int status(char*);

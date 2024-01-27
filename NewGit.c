@@ -70,14 +70,7 @@ int main(int argc , char** argv)
             {
                 if(opendir(argv[i + 3]) == NULL)
                 {
-                    if(stage_file(argv[i + 3]) == ERROR)
-                    {
-                        return ERROR;
-                    }
-                    else
-                    {
-                        return SUCCEED;
-                    }
+                    stage_file(argv[i + 3]);//Error handeling cann't be done 
                 }
                 else
                 {
@@ -93,16 +86,10 @@ int main(int argc , char** argv)
                         DIRECTORY_OPENING_ERROR
                         return ERROR;
                     }
-                    else if(stage_directory(argv[i + 3] , current_directory , main_directory) == ERROR)
-                    {
-                        return ERROR;
-                    }
-                    else
-                    {
-                        return SUCCEED;
-                    }
+                    stage_directory(argv[i + 3] , current_directory , main_directory);//Error handeling cann't be done 
                 }
             }
+            return SUCCEED;
         }
         else if(strcmp(argv[2] , "-n") == 0)
         {
@@ -199,14 +186,7 @@ int main(int argc , char** argv)
             {
                 if(opendir(argv[i + 3]) == NULL)
                 {
-                    if(reset_file(argv[i + 3]) == ERROR)
-                    {
-                        return ERROR;
-                    }
-                    else
-                    {
-                        return SUCCEED;
-                    }
+                    reset_file(argv[i + 3]);//Error handeling cann't be done 
                 }
                 else
                 {
@@ -222,16 +202,10 @@ int main(int argc , char** argv)
                         DIRECTORY_OPENING_ERROR
                         return ERROR;
                     }
-                    else if(reset_directory(argv[i + 3] , current_directory , main_directory) == ERROR)
-                    {
-                        return ERROR;
-                    }
-                    else 
-                    {
-                        return SUCCEED;
-                    }
+                    reset_directory(argv[i + 3] , current_directory , main_directory);//Error handeling cann't be done 
                 }
             }
+            return SUCCEED;
         }
         else if(argc == 3)
         {
@@ -274,6 +248,31 @@ int main(int argc , char** argv)
         {
             INVALID_INPUT_ERROR
             return ERROR;
+        }
+    }
+    else if(strcmp(argv[1] , "status") == 0)
+    {
+        if(argc != 2)
+        {
+            INVALID_INPUT_ERROR
+            return ERROR;
+        }
+        else
+        {
+            char current_direcotry[MAX_DIRECTORY_NAME_LENGTH];
+            if(getcwd(current_direcotry , MAX_DIRECTORY_NAME_LENGTH) == NULL)
+            {
+                DIRECTORY_OPENING_ERROR
+                return ERROR;
+            }
+            else if(status(current_direcotry) == ERROR)
+            {
+                return ERROR;
+            }
+            else
+            {
+                return SUCCEED;
+            }
         }
     }
 }
