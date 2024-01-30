@@ -163,7 +163,7 @@ int stage_checker_name(char* file_name)
     dirent* entry = readdir(directory);
     while(entry != NULL)
     {
-        if((entry -> d_type == DT_REG) && (strcmp(entry -> d_name , file_name) == 0))
+        if(strcmp(entry -> d_name , file_name) == 0)
         {
             return SUCCEED;
         }
@@ -181,6 +181,21 @@ int delete_file(char* file_name_destenation , char* file_name)
     strcat(destination_path , file_name);
     char command[MAX_COMMAND_LENGTH];
     strcpy(command , "rm ");
+    strcat(command , destination_path);
+    if(system(command) !=0)
+    {
+        return ERROR;
+    }
+    return SUCCEED;
+}
+int delete_directory(char* directory_destenation , char* directory)
+{
+    char destination_path[MAX_DIRECTORY_NAME_LENGTH];
+    strcpy(destination_path , directory_destenation);
+    strcat(destination_path , "/.NewGit/Stage/");
+    strcat(destination_path , directory);
+    char command[MAX_COMMAND_LENGTH];
+    strcpy(command , "rm -rf ");
     strcat(command , destination_path);
     if(system(command) !=0)
     {

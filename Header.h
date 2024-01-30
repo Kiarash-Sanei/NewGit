@@ -14,6 +14,7 @@
 #define MAX_COMMAND_LENGTH 2000
 #define MAX_UNDO_LENGTH 2000
 #define MAX_BRANCH_NAME 100
+#define MAX_COMMAND_HASH_LENGTH 20
 #define MAX_COMMIT_MESSAGE_LENGTH 73
 #define MAX_LINE_LENGTH 1000
 #define MAX_WORD_LENGTH 100
@@ -57,6 +58,7 @@ int file_content_checker(char* , char*);
 int stage_checker_complete(char* , char*);
 int stage_checker_name(char*);
 int delete_file(char* , char*);
+int delete_directory(char* , char*);
 //Initializing:
 int NewGit_maker();
 //Configuration:
@@ -69,7 +71,10 @@ int show(int , char*);//cann't handle same file name
 int redo();//doesn't work
 //Reset:
 int reset_file(char*);//if you use this undo cann't be done
-int reset_directory(char* , char* , char*);//if you use this undo cann't be done
+int reset_directory(char*);//if you use this undo cann't be done
 int undo();
 //Status:
 int status(char*);
+//Branch:
+int branch_maker(char* , char* , char* , char*);
+int branch_shower();

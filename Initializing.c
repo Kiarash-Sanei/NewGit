@@ -31,6 +31,16 @@ int NewGit_maker()
             DIRECTORY_CREATING_ERROR
             return ERROR;
         }
+        if(mkdir("./Branches" , ACCESS) == -1)
+        {
+            DIRECTORY_CREATING_ERROR
+            return ERROR;
+        }
+        if(mkdir("./Branches/master" , ACCESS) == -1)
+        {
+            DIRECTORY_CREATING_ERROR
+            return ERROR;
+        }
         if(chdir(current_directory) != 0)
         {
             DIRECTORY_OPENING_ERROR

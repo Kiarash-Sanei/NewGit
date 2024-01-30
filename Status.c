@@ -9,7 +9,7 @@ int status(char* current_directory)
         return ERROR;
     }
     strcat(stage_path , "/.NewGit/stageLog.txt");
-    char** all = (char**) malloc(sizeof(char) * MAX_FILE_COUNT);
+    char all[MAX_FILE_COUNT][MAX_FILE_NAME_LENGTH];
     int index = 0;
     DIR* directory = opendir(current_directory);
     dirent* entry = readdir(directory);
@@ -28,86 +28,52 @@ int status(char* current_directory)
                 {
                     printf("\n");
                 }
-                *(all + index) = (char*) malloc(sizeof(char) * MAX_FILE_NAME_LENGTH);
-                strcpy(*(all + index) , entry -> d_name);
-                index++;
+                strcpy(all[index] , entry -> d_name);
+                index ++;
             }
             else
             {
                 printf("%s ---- Unstagged Was added recently\n", entry -> d_name);
             }
         }
-        else if((entry -> d_type == DT_DIR) && (strcmp(entry -> d_name , ".") != 0) && (strcmp(entry -> d_name , "..") != 0))
-        {
-            char temporary_directory[MAX_DIRECTORY_NAME_LENGTH];
-            strcpy(temporary_directory , current_directory);
-            strcat(temporary_directory , "/");
-            strcat(temporary_directory , entry -> d_name);
-            if(status(temporary_directory) == ERROR)
-            {
-                return ERROR;
-            }
-        }
         entry = readdir(directory);
     }
-    for(int i = 0 ; i < index ; i++)
-    {
-        printf("%d:", i);
-        puts(all[i]);
-    }
-    char** remain = (char**) malloc(sizeof(char) * MAX_FILE_COUNT);
-    int index1 = 0;
     FILE* file_log = fopen(stage_path , "r");
     char word[MAX_WORD_LENGTH];
+    char all_2[MAX_UNDO_LENGTH][MAX_WORD_LENGTH];
+    int index_2 = 0;
+    char* stage_path_2 = NewGit_finder();
+    strcat(stage_path_2 , "/Stage");
+    chdir(stage_path_2);
     while(fgets(word , sizeof(word) , file_log)) 
     {
-        word[strlen(word) - 1] = '\0';    
-        int flag = 1;
-        for(int i = 0 ; i < index1 ; i++)
+        word[strlen(word) - 1] = '\0';  
+        DIR* temp = opendir(word);  
+        if(temp != NULL)
         {
-            if(strcmp(word , *(remain + i)) == 0)
-            {
-                flag = 0;
-            }
+            continue;
         }
-        if(flag == 1)
-        {
-            *(remain + index1) = (char*) malloc(sizeof(char) * MAX_FILE_NAME_LENGTH);
-            strcpy(*(remain + index1) , word);
-            index1++;
-        }
+        strcpy(all_2[index_2] , word);
+        index_2++;
     }
-    fclose(file_log);
-    for(int i = 0 ; i < index1 ; i++)
+    chdir(current_directory);
+    fclose(file_log);  
+    for(int i = 0 ; i < index_2 ; i++)
     {
         int flag = 0;
         for(int j = 0 ; j < index ; j++)
         {
-            if(strcmp(all[j] , remain[i]) == 0)
+            if(strcmp(all[j] , all_2[i]) == 0)
             {
                 flag = 1;
                 break;
             }
         }
-        if(flag == 1)
+        if(flag != 1)
         {
-            continue;
-        }
-        else
-        {
-            printf("%s ---- Stagged Deleted from the project\n", remain[i]);
+            printf("%s ---- Stagged Deleted from the project\n", all_2[i]);
         }
     }
     free(stage_path);
-    for(int i = 0 ; i < index ; i++)
-    {
-        free(*(all + i));
-    }
-    free(all);
-    for(int i = 0 ; i < index1 ; i++)
-    {
-        free(*(remain + i));
-    }
-    free(remain);
     return SUCCEED;
 }

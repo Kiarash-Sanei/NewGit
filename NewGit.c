@@ -1,7 +1,8 @@
 #include "Header.h"
 
-//Default brach:
-char branch_name[MAX_BRANCH_NAME] = "main";
+//Default branch:
+char branch_name[MAX_BRANCH_NAME] = "master";
+char HEAD[MAX_COMMAND_HASH_LENGTH];
 
 int main(int argc , char** argv)
 {
@@ -190,19 +191,7 @@ int main(int argc , char** argv)
                 }
                 else
                 {
-                    char current_directory[MAX_DIRECTORY_NAME_LENGTH];
-                    char main_directory[MAX_DIRECTORY_NAME_LENGTH];
-                    if(getcwd(current_directory , MAX_DIRECTORY_NAME_LENGTH) == NULL)
-                    {
-                        DIRECTORY_OPENING_ERROR
-                        return ERROR;
-                    }
-                    else if(getcwd(main_directory , MAX_DIRECTORY_NAME_LENGTH) == NULL)
-                    {
-                        DIRECTORY_OPENING_ERROR
-                        return ERROR;
-                    }
-                    reset_directory(argv[i + 3] , current_directory , main_directory);//Error handeling cann't be done 
+                    reset_directory(argv[i + 3]);//Error handeling cann't be done 
                 }
             }
             return SUCCEED;
@@ -222,26 +211,7 @@ int main(int argc , char** argv)
             }
             else
             {
-                char current_directory[MAX_DIRECTORY_NAME_LENGTH];
-                char main_directory[MAX_DIRECTORY_NAME_LENGTH];
-                if(getcwd(current_directory , MAX_DIRECTORY_NAME_LENGTH) == NULL)
-                {
-                    DIRECTORY_OPENING_ERROR
-                    return ERROR;
-                }
-                else if(getcwd(main_directory , MAX_DIRECTORY_NAME_LENGTH) == NULL)
-                {
-                    DIRECTORY_OPENING_ERROR
-                    return ERROR;
-                }
-                else if(reset_directory(argv[2] , current_directory , main_directory) == ERROR)
-                {
-                    return ERROR;
-                }
-                else
-                {
-                    return SUCCEED;
-                }
+                reset_directory(argv[2]);
             }
         }
         else
@@ -265,7 +235,7 @@ int main(int argc , char** argv)
                 DIRECTORY_OPENING_ERROR
                 return ERROR;
             }
-            else if(status(current_direcotry) == ERROR)
+            if(status(current_direcotry) == ERROR)
             {
                 return ERROR;
             }
@@ -273,6 +243,46 @@ int main(int argc , char** argv)
             {
                 return SUCCEED;
             }
+        }
+    }
+    else if(strcmp(argv[1] , "branch") == 0)
+    {
+        if(argc == 2)
+        {
+            if(branch_shower() == ERROR)
+            {
+                FAIL_MASSAGE("Showing branches")
+                return ERROR;
+            }
+            else
+            {
+                SUCCESS_MASSAGE("Showing branches")
+                return SUCCEED;
+            }
+        }
+        else if(argc == 3)
+        {
+            char current_direcotry[MAX_DIRECTORY_NAME_LENGTH];
+            if(getcwd(current_direcotry , MAX_DIRECTORY_NAME_LENGTH) == NULL)
+            {
+                DIRECTORY_OPENING_ERROR
+                return ERROR;
+            }
+            if(branch_maker(branch_name , HEAD , argv[2] , current_direcotry) == ERROR)
+            {
+                FAIL_MASSAGE("Making branch")
+                return ERROR;
+            }
+            else
+            {
+                SUCCESS_MASSAGE("Making branch")
+                return SUCCEED;
+            }
+        }
+        else
+        {
+            INVALID_INPUT_ERROR
+            return ERROR;
         }
     }
 }
