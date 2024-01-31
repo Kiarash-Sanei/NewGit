@@ -2,7 +2,7 @@
 
 //Default branch:
 char branch_name[MAX_BRANCH_NAME] = "master";
-char HEAD[MAX_COMMAND_HASH_LENGTH];
+int HEAD;
 
 int main(int argc , char** argv)
 {
@@ -75,19 +75,7 @@ int main(int argc , char** argv)
                 }
                 else
                 {
-                    char current_directory[MAX_DIRECTORY_NAME_LENGTH];
-                    char main_directory[MAX_DIRECTORY_NAME_LENGTH];
-                    if(getcwd(current_directory , MAX_DIRECTORY_NAME_LENGTH) == NULL)
-                    {
-                        DIRECTORY_OPENING_ERROR
-                        return ERROR;
-                    }
-                    else if(getcwd(main_directory , MAX_DIRECTORY_NAME_LENGTH) == NULL)
-                    {
-                        DIRECTORY_OPENING_ERROR
-                        return ERROR;
-                    }
-                    stage_directory(argv[i + 3] , current_directory , main_directory);//Error handeling cann't be done 
+                    stage_directory(argv[i + 3]);//Error handeling cann't be done 
                 }
             }
             return SUCCEED;
@@ -135,19 +123,7 @@ int main(int argc , char** argv)
             }
             else
             {
-                char current_directory[MAX_DIRECTORY_NAME_LENGTH];
-                char main_directory[MAX_DIRECTORY_NAME_LENGTH];
-                if(getcwd(current_directory , MAX_DIRECTORY_NAME_LENGTH) == NULL)
-                {
-                    DIRECTORY_OPENING_ERROR
-                    return ERROR;
-                }
-                else if(getcwd(main_directory , MAX_DIRECTORY_NAME_LENGTH) == NULL)
-                {
-                    DIRECTORY_OPENING_ERROR
-                    return ERROR;
-                }
-                else if(stage_directory(argv[2] , current_directory , main_directory) == ERROR)
+                if(stage_directory(argv[2]) == ERROR)
                 {
                     return ERROR;
                 }
@@ -277,6 +253,43 @@ int main(int argc , char** argv)
             {
                 SUCCESS_MASSAGE("Making branch")
                 return SUCCEED;
+            }
+        }
+        else
+        {
+            INVALID_INPUT_ERROR
+            return ERROR;
+        }
+    }
+    else if(strcmp(argv[1] , "commit") == 0)
+    {
+        if(strcmp(argv[2] , "-m") == 0)
+        {
+            if(argc == 4)
+            {
+                if(strlen(argv[3]) > MAX_COMMIT_MESSAGE_LENGTH)
+                {
+                    MASSAGE_IS_TOO_LONG
+                    INVALID_INPUT_ERROR
+                    return ERROR;
+                }
+                else
+                {
+                    if(add_commit(branch_name , argv[3]) == SUCCEED)
+                    {
+                        return SUCCEED;
+                    }
+                    else
+                    {
+                        FAIL_MASSAGE("Committing")
+                        return ERROR;
+                    }
+                }
+            }
+            else
+            {
+                INVALID_INPUT_ERROR
+                return ERROR;
             }
         }
         else

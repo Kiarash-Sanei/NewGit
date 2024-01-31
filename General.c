@@ -64,26 +64,27 @@ char* NewGit_finder()
             return NULL;
         }
 }
-int copy_file(char* file_name_destenation , char* file_name_source , char* file_name)
+int copy_file(char* destination , char* source)
 {
-    char destination_path[MAX_DIRECTORY_NAME_LENGTH];
-    char source_path[MAX_DIRECTORY_NAME_LENGTH];
-    strcpy(destination_path , file_name_destenation);
-    strcat(destination_path , "/.NewGit/Stage/");
-    strcat(destination_path , file_name);
-    strcpy(source_path , file_name_source);
-    strcat(source_path , "/");
-    strcat(source_path , file_name);
     char command[MAX_COMMAND_LENGTH];
     strcpy(command , "cp ");
-    strcat(command , source_path);
+    strcat(command , source);
     strcat(command , " ");
-    strcat(command , destination_path);
+    strcat(command , destination);
     if(system(command) !=0)
     {
         return ERROR;
     }
     return SUCCEED;
+}
+int copy_directory(char* destenation , char* source)
+{
+    char command[MAX_COMMAND_LENGTH];
+    strcpy(command , "cp -r ");
+    strcat(command , source);
+    strcat(command , " ");
+    strcat(command , destenation);
+    system(command);
 }
 int file_content_checker(char* file_name1 , char* file_name2)
 {

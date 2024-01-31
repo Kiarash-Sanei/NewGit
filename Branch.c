@@ -9,18 +9,30 @@ int branch_maker(char* parent_branch , char* commit_hash , char* branch_name , c
         return ERROR;
     }
     strcat(path , "/.NewGit/Branches");
+    DIR* directory = opendir(path);
+    dirent* entry = readdir(directory);
+    while(entry != NULL)
+    {
+        if(strcmp(entry -> d_name , branch_name) == 0)
+        {
+            BRANCH_ALREADY_EXIST
+            return FAILED
+        }
+        entry = readdir(directory);
+    }
     chdir(path);
     mkdir(branch_name , ACCESS);
-    char command[MAX_COMMAND_LENGTH];
-    strcpy(command , "cp -r ");
-    strcat(command , "./");
-    strcat(command , parent_branch);
-    strcat(command , "/");
-    strcat(command , commit_hash);
-    strcat(command , " ./");
-    strcat(command , branch_name);
-    system(command);
     chdir(current_directory);
+    strcat(path , parent_branch);
+    strcat(path , "/");
+    strcat(path , commit_hash);
+    char* path_2 = NewGit_finder();
+    strcat(path_2 , "/.NewGit/Branches");
+    strcat(path_2 , branch_name);
+    copy_directory(path_2 , path);
+    free(path);
+    free(path_2);
+    strcpy(parent_branch , branch_name);
 }
 int branch_shower()
 {
@@ -39,8 +51,6 @@ int branch_shower()
         entry = readdir(directory);
     }
     closedir(directory);
-    free(directory);
-    free(entry);
     free(path);
     return SUCCEED;
 }

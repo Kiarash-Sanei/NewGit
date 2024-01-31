@@ -26,6 +26,13 @@ int NewGit_maker()
             DIRECTORY_CREATING_ERROR
             return ERROR;
         }
+        FILE* file = fopen("./Configuration/localUser.txt" , "w");
+        if(file == NULL)
+        {
+            FILE_CREATING_ERROR
+            return ERROR;
+        }
+        fclose(file);
         if(mkdir("./Stage" , ACCESS) == -1)
         {
             DIRECTORY_CREATING_ERROR

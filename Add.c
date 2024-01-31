@@ -2,8 +2,8 @@
 
 int stage_file(char* file_name)
 {
-    char* stage_path = NewGit_finder();
-    if(stage_path == NULL)
+    char* path = NewGit_finder();
+    if(path == NULL)
     {
         NewGit_EXISTENCE_ERROR
         return ERROR;
@@ -15,13 +15,17 @@ int stage_file(char* file_name)
         EXISTENCE_ERROR_MASSAGE(file_name)
         return ERROR;
     }
+    fclose(file);
     char current_directory[MAX_DIRECTORY_NAME_LENGTH];
     if(getcwd(current_directory , MAX_DIRECTORY_NAME_LENGTH) == NULL)
     {
         DIRECTORY_OPENING_ERROR
         return ERROR;
     }
-    if(copy_file(stage_path , current_directory , file_name) == ERROR)
+    strcat(current_directory , "/");
+    strcat(current_directory , file_name);
+    strcat(path , "/.NewGit/Stage");
+    if(copy_file(current_directory , path) == ERROR)
     {
         char massage[strlen(file_name) + 9];
         strcpy(massage , "Stagging ");
@@ -29,29 +33,27 @@ int stage_file(char* file_name)
         FAIL_MASSAGE(massage)
         return ERROR;
     }
-    fclose(file);
-    strcat(stage_path , "/.NewGit/stageLog.txt");
-    file = fopen(stage_path , "a");
+    free(path);
+    path = NewGit_finder();
+    strcat(path , "/.NewGit/stageLog.txt");
+    file = fopen(path , "a");
     fprintf(file , "%s\n" , file_name);
     fclose(file);
-    free(stage_path);
+    free(path);
     char massage[strlen(file_name) + 9];
     strcpy(massage , "Stagging ");
     strcat(massage , file_name);
     SUCCESS_MASSAGE(massage)
     return SUCCEED;
 }
-int stage_directory(char* directory_name , char* current_directory , char* main_directory)
+int stage_directory(char* directory_name)
 {
-    char* stage_path = NewGit_finder();
-    if(stage_path == NULL)
+    char* path = NewGit_finder();
+    if(path == NULL)
     {
         NewGit_EXISTENCE_ERROR
         return ERROR;
     }
-    chdir(current_directory);
-    strcat(current_directory , "/");
-    strcat(current_directory , directory_name);
     DIR* directory = opendir(directory_name);
     if(directory == NULL)
     {
@@ -60,18 +62,30 @@ int stage_directory(char* directory_name , char* current_directory , char* main_
         return ERROR;
     }
     closedir(directory);
-    char command[MAX_COMMAND_LENGTH];
-    strcpy(command , "cp -r ");
-    strcat(command , directory_name);
-    strcat(command , " ");
-    strcat(command , stage_path);
-    strcat(command , "/.NewGit/Stage");
-    system(command);
-    strcat(stage_path , "/.NewGit/stageLog.txt");
-    FILE* file = fopen(stage_path , "a");
+    char current_directory[MAX_DIRECTORY_NAME_LENGTH];
+    if(getcwd(current_directory , MAX_DIRECTORY_NAME_LENGTH) == NULL)
+    {
+        DIRECTORY_OPENING_ERROR
+        return ERROR;
+    }
+    strcat(current_directory , "/");
+    strcat(current_directory , directory_name);
+    strcat(path , "/.NewGit/Stage");
+    if(copy_directory(current_directory , path) == ERROR)
+    {
+        char massage[strlen(directory_name) + 9];
+        strcpy(massage , "Stagging ");
+        strcat(massage , directory_name);
+        FAIL_MASSAGE(massage)
+        return ERROR;
+    }
+    free(path);
+    path = NewGit_finder();
+    strcat(path , "/.NewGit/stageLog.txt");
+    FILE* file = fopen(path , "a");
     fprintf(file , "%s\n" , directory_name);
     fclose(file);
-    free(stage_path);
+    free(path);
     char massage[strlen(directory_name) + 9];
     strcpy(massage , "Stagging ");
     strcat(massage , directory_name);
