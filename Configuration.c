@@ -30,6 +30,36 @@ int add_configuration_global(char* option , char* input)
         alias* current_alias = (alias*) malloc(sizeof(alias));
         strcpy(current_alias -> shortcut , option);
         strcpy(current_alias -> command , input);
+        if(strchr(input , ' ') == NULL)
+        {
+            INVALID_COMMAND_ERROR
+            return ERROR;
+        }
+        if(strncmp("NewGit" , input , 6) != 0)
+        {
+            INVALID_COMMAND_ERROR
+            return ERROR;
+        }
+        char word[MAX_WORD_LENGTH];
+        strtok(input , " ");
+        strcpy(word , strtok(NULL , " "));
+        FILE* file_command = fopen("/home/kiarash-sanei/Desktop/NewGit/commands.txt" , "r");
+        char command[MAX_WORD_LENGTH];
+        int flag = 0;
+        while(fgets(command , MAX_WORD_LENGTH , file_command))
+        {
+            command[strlen(command) - 1] = '\0';
+            if(strcmp(word , command) == 0)
+            {
+                flag = 1;
+                break;
+            }
+        }
+        if(flag == 0)
+        {
+            INVALID_COMMAND_ERROR
+            return ERROR;
+        }
         fwrite(current_alias , sizeof(alias) , 1 , file);
         fclose(file);
         free(current_alias);
@@ -78,6 +108,36 @@ int add_configuration_loacal(char* option , char* input)
         alias* current_alias = (alias*) malloc(sizeof(alias));
         strcpy(current_alias -> shortcut , option);
         strcpy(current_alias -> command , input);
+        if(strchr(input , ' ') == NULL)
+        {
+            INVALID_COMMAND_ERROR
+            return ERROR;
+        }
+        if(strncmp("NewGit" , input , 6) != 0)
+        {
+            INVALID_COMMAND_ERROR
+            return ERROR;
+        }
+        char word[MAX_WORD_LENGTH];
+        strtok(input , " ");
+        strcpy(word , strtok(NULL , " "));
+        FILE* file_command = fopen("/home/kiarash-sanei/Desktop/NewGit/commands.txt" , "r");
+        char command[MAX_WORD_LENGTH];
+        int flag = 0;
+        while(fgets(command , MAX_WORD_LENGTH , file_command))
+        {
+            command[strlen(command) - 1] = '\0';
+            if(strcmp(word , command) == 0)
+            {
+                flag = 1;
+                break;
+            }
+        }
+        if(flag == 0)
+        {
+            INVALID_COMMAND_ERROR
+            return ERROR;
+        }
         fwrite(current_alias , sizeof(alias) , 1 , file);
         fclose(file);
         free(current_alias);

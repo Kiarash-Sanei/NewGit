@@ -25,7 +25,7 @@ int stage_file(char* file_name)
     strcat(current_directory , "/");
     strcat(current_directory , file_name);
     strcat(path , "/.NewGit/Stage");
-    if(copy_file(current_directory , path) == ERROR)
+    if(copy_file(path , current_directory) == ERROR)
     {
         char massage[strlen(file_name) + 9];
         strcpy(massage , "Stagging ");
@@ -71,7 +71,7 @@ int stage_directory(char* directory_name)
     strcat(current_directory , "/");
     strcat(current_directory , directory_name);
     strcat(path , "/.NewGit/Stage");
-    if(copy_directory(current_directory , path) == ERROR)
+    if(copy_directory(path , current_directory) == ERROR)
     {
         char massage[strlen(directory_name) + 9];
         strcpy(massage , "Stagging ");
@@ -142,8 +142,4 @@ int show(int depth , char* current_directory)
     }
     closedir(directory);
     return SUCCEED;
-}
-int redo()
-{
-
 }

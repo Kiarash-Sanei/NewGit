@@ -14,7 +14,20 @@ int reset_file(char* file_name)
         DIRECTORY_OPENING_ERROR
         return ERROR;
     }
-    delete_file(stage_path , file_name);
+    if(stage_checker_name(file_name) == SUCCEED)
+    {
+        delete_file(stage_path , file_name);
+    }
+    else
+    {
+        STAGE_EXISTENCE_ERROR_MASSAGE(file_name)
+        char massage[strlen(file_name) + 9];
+        strcpy(massage , "Unstagging ");
+        strcat(massage , file_name);
+        FAIL_MASSAGE(massage)
+        return ERROR;
+        return ERROR;
+    }
     strcat(stage_path , "/.NewGit/stageLog.txt");
     FILE* file_log = fopen(stage_path , "r");
     char word[MAX_WORD_LENGTH];
@@ -64,6 +77,7 @@ int reset_directory(char* directory_name)
     }
     else
     {
+        STAGE_EXISTENCE_ERROR_MASSAGE(directory_name)
         char massage[strlen(directory_name) + 9];
         strcpy(massage , "Unstagging ");
         strcat(massage , directory_name);
@@ -118,13 +132,25 @@ int undo()
         strcpy(all[index] , word);
         index++;
     }
-    fclose(file_log);   
+    fclose(file_log);
+    free(stage_path);   
     strcpy(word , all[index - 1]); 
     if(word[0] == '\0')
     {
         LACK_OF_ADD
         return ERROR;
     }
-    reset_file(word);
+    stage_path = NewGit_finder();
+    strcat(stage_path , "/.NewGit/Stage/");
+    strcat(stage_path , word);
+    DIR* temporary_directory = opendir(stage_path);
+    if(temporary_directory == NULL)
+    {
+        reset_file(word);
+    }
+    else
+    {
+        reset_directory(word);
+    }
     return SUCCEED;
 }

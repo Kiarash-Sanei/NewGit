@@ -84,7 +84,11 @@ int copy_directory(char* destenation , char* source)
     strcat(command , source);
     strcat(command , " ");
     strcat(command , destenation);
-    system(command);
+    if(system(command) !=0)
+    {
+        return ERROR;
+    }
+    return SUCCEED;
 }
 int file_content_checker(char* file_name1 , char* file_name2)
 {
@@ -203,4 +207,36 @@ int delete_directory(char* directory_destenation , char* directory)
         return ERROR;
     }
     return SUCCEED;
+}
+void reverse(char str[] , int length)
+{
+    int start = 0;
+    int end = length - 1;
+    while(start < end) 
+    {
+        char temp = str[start];
+        str[start] = str[end];
+        str[end] = temp;
+        end--;
+        start++;
+    }
+}
+char* citoa(int num , char* str , int base)
+{
+    int i = 0;
+    if(num == 0) 
+    {
+        str[i++] = '0';
+        str[i] = '\0';
+        return str;
+    }
+    while(num != 0) 
+    {
+        int rem = num % base;
+        str[i++] = (rem > 9) ? (rem - 10) + 'a' : rem + '0';
+        num = num / base;
+    }
+    str[i] = '\0';
+    reverse(str , i);
+    return str;
 }

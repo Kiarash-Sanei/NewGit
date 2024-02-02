@@ -6,6 +6,21 @@ int HEAD;
 
 int main(int argc , char** argv)
 {
+    char* path = NewGit_finder();
+    if(path != NULL)
+    {
+        strcat(path , "/.NewGit/HEADInformation.txt");
+        FILE* file_HEAD = fopen(path , "r");
+        if(file_HEAD != NULL)
+        {
+            HEAD_information new;
+            if(fread(&new , sizeof(HEAD_information) , 1 , file_HEAD) == 1)
+            {
+                HEAD = new . HEAD;
+                strcpy(branch_name , new . branch_name);
+            }
+        }
+    }
     if(strcmp(argv[1] , "config") == 0)
     {
         if(strcmp(argv[2] , "-global") == 0)
@@ -275,8 +290,74 @@ int main(int argc , char** argv)
                 }
                 else
                 {
-                    if(add_commit(branch_name , argv[3]) == SUCCEED)
+                    if(add_commit(branch_name , argv[3] , &HEAD) == SUCCEED)
                     {
+                        char* path = NewGit_finder();
+                        strcat(path , "/.NewGit/HEADInformation.txt");
+                        FILE* file = fopen(path , "w");
+                        HEAD_information new;
+                        new . HEAD = HEAD;
+                        strcpy(new . branch_name , branch_name);
+                        fwrite(&new , sizeof(HEAD_information) , 1 , file);
+                        return SUCCEED;
+                    }
+                    else
+                    {
+                        FAIL_MASSAGE("Committing")
+                        return ERROR;
+                    }
+                }
+            }
+            else
+            {
+                INVALID_INPUT_ERROR
+                return ERROR;
+            }
+        }
+        if(strcmp(argv[2] , "-s") == 0)
+        {
+            if(argc == 4)
+            {
+                if(strlen(argv[3]) > MAX_ALIAS_LENGHT)
+                {
+                    SHORTCUT_IS_TOO_LONG
+                    INVALID_INPUT_ERROR
+                    return ERROR;
+                }
+                else
+                {
+                    char* path = NewGit_finder();
+                    if(path == NULL)
+                    {
+                        NewGit_EXISTENCE_ERROR
+                        return ERROR;
+                    }
+                    strcat(path , "/.NewGit/setting.txt");
+                    FILE* file_setting = fopen(path , "r");
+                    massage_information current_shortcut;
+                    int flag = 0;
+                    while(fread(&current_shortcut , sizeof(massage_information) , 1 , file_setting) == 1)
+                    {
+                        if(strcmp(current_shortcut . shortcut , argv[3]) == 0)
+                        {
+                            flag = 1;
+                            break; 
+                        }
+                    }
+                    if(flag == 0)
+                    {
+                        SHORTCUT_EXISTENCE_ERROR
+                        return ERROR;
+                    }
+                    if(add_commit(branch_name , current_shortcut . massage , &HEAD) == SUCCEED)
+                    {
+                        char* path = NewGit_finder();
+                        strcat(path , "/.NewGit/HEADInformation.txt");
+                        FILE* file = fopen(path , "w");
+                        HEAD_information new;
+                        new . HEAD = HEAD;
+                        strcpy(new . branch_name , branch_name);
+                        fwrite(&new , sizeof(HEAD_information) , 1 , file);
                         return SUCCEED;
                     }
                     else
@@ -296,6 +377,235 @@ int main(int argc , char** argv)
         {
             INVALID_INPUT_ERROR
             return ERROR;
+        }
+    }
+    else if(strcmp(argv[1] , "set") == 0)
+    {
+        if((strcmp(argv[2] , "-m") == 0) && (strcmp(argv[4] , "-s") == 0))
+        {
+            if(argc == 6)
+            {
+                if(strlen(argv[3]) > MAX_COMMIT_MESSAGE_LENGTH)
+                {
+                    MASSAGE_IS_TOO_LONG
+                    INVALID_INPUT_ERROR
+                    return ERROR;
+                }
+                if(strlen(argv[5]) > MAX_ALIAS_LENGHT)
+                {
+                    SHORTCUT_IS_TOO_LONG
+                    INVALID_INPUT_ERROR
+                    return ERROR;
+                }
+                else
+                {
+                    if(set(argv[3] , argv[5]) == SUCCEED)
+                    {
+                        return SUCCEED;
+                    }
+                    else
+                    {
+                        FAIL_MASSAGE("Setting")
+                        return ERROR;
+                    }
+                }
+            }
+            else
+            {
+                INVALID_INPUT_ERROR
+                return ERROR;
+            }
+        }
+        else
+        {
+            INVALID_INPUT_ERROR
+            return ERROR;
+        }
+    }
+    else if(strcmp(argv[1] , "replace") == 0)
+    {
+        if((strcmp(argv[2] , "-m") == 0) && (strcmp(argv[4] , "-s") == 0))
+        {
+            if(argc == 6)
+            {
+                if(strlen(argv[3]) > MAX_COMMIT_MESSAGE_LENGTH)
+                {
+                    MASSAGE_IS_TOO_LONG
+                    INVALID_INPUT_ERROR
+                    return ERROR;
+                }
+                if(strlen(argv[5]) > MAX_ALIAS_LENGHT)
+                {
+                    SHORTCUT_IS_TOO_LONG
+                    INVALID_INPUT_ERROR
+                    return ERROR;
+                }
+                else
+                {
+                    if(replace(argv[3] , argv[5]) == SUCCEED)
+                    {
+                        return SUCCEED;
+                    }
+                    else
+                    {
+                        FAIL_MASSAGE("Replacing")
+                        return ERROR;
+                    }
+                }
+            }
+            else
+            {
+                INVALID_INPUT_ERROR
+                return ERROR;
+            }
+        }
+        else
+        {
+            INVALID_INPUT_ERROR
+            return ERROR;
+        }
+    }
+    else if(strcmp(argv[1] , "remove") == 0)
+    {
+        if(strcmp(argv[2] , "-s") == 0)
+        {
+            if(argc == 4)
+            {
+                if(strlen(argv[3]) > MAX_ALIAS_LENGHT)
+                {
+                    SHORTCUT_IS_TOO_LONG
+                    INVALID_INPUT_ERROR
+                    return ERROR;
+                }
+                else
+                {
+                    if(remove_shortcut(argv[3]) == SUCCEED)
+                    {
+                        return SUCCEED;
+                    }
+                    else
+                    {
+                        FAIL_MASSAGE("Removing")
+                        return ERROR;
+                    }
+                }
+            }
+            else
+            {
+                INVALID_INPUT_ERROR
+                return ERROR;
+            }
+        }
+        else
+        {
+            INVALID_INPUT_ERROR
+            return ERROR;
+        }
+    }
+    else if(strcmp(argv[1] , "log") == 0)
+    {
+        if(argc == 2)
+        {
+            if(log_show() == ERROR)
+            {
+                FAIL_MASSAGE("Showing log")
+                return ERROR;
+            }
+            else
+            {
+                return SUCCEED;
+            }
+        }
+        else if(strcmp(argv[2] , "-n") == 0)
+        {
+            if(argc == 4)
+            {
+                if(log_number(atoi(argv[3])) == ERROR)
+                {
+                    FAIL_MASSAGE("Showing log")
+                    return ERROR;
+                }
+                else
+                {
+                    return SUCCEED;
+                }
+            }
+        }
+        else if(strcmp(argv[2] , "-branch") == 0)
+        {
+            if(argc == 4)
+            {
+                if(log_branch(argv[3]) == ERROR)
+                {
+                    FAIL_MASSAGE("Showing log")
+                    return ERROR;
+                }
+                else
+                {
+                    return SUCCEED;
+                }
+            }    
+        }
+        else if(strcmp(argv[2] , "-author") == 0)
+        {
+            if(argc == 4)
+            {
+                if(log_author(argv[3]) == ERROR)
+                {
+                    FAIL_MASSAGE("Showing log")
+                    return ERROR;
+                }
+                else
+                {
+                    return SUCCEED;
+                }
+            }    
+        }
+        else if(strcmp(argv[2] , "-since") == 0)
+        {
+            if(argc == 4)
+            {
+                tm temporary;
+                int year;
+                int month;
+                int day;
+                sscanf(argv[3] , "%d/%d/%d" , &year, &month, &day);
+                temporary . tm_year = year - 1900;
+                temporary . tm_mon = month - 1;
+                temporary . tm_mday = day;                
+                if(log_time_since(mktime(&temporary)) == ERROR)
+                {
+                    FAIL_MASSAGE("Showing log")
+                    return ERROR;
+                }
+                else
+                {
+                    return SUCCEED;
+                }
+            }    
+        }
+        else if(strcmp(argv[2] , "-before") == 0)
+        {
+            if(argc == 4)
+            {
+                tm temporary;
+                int year;
+                int month;
+                int day;
+                sscanf(argv[3] , "%d/%d/%d" , &year, &month, &day);
+                temporary . tm_year = year - 1900;
+                temporary . tm_mon = month - 1;
+                temporary . tm_mday = day;
+                if(log_time_before(mktime(&temporary)) == ERROR)
+                {
+                    FAIL_MASSAGE("Showing log")
+                    return ERROR;
+                }
+                else
+                {
+                    return SUCCEED;
+                }
+            }    
         }
     }
 }
