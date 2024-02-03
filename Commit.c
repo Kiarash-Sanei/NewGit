@@ -49,10 +49,27 @@ int add_commit(char* current_branch , char* massage , int* HEAD)
         LACK_OF_ADD
         return ERROR;
     }
+    free(path);
+    path = NewGit_finder();
+    strcat(path , "/.NewGit/");
+    strcat(path , current_branch);
+    strcat(path , "/commitLog.txt");
+    FILE* file = fopen(path , "r");
+    commit_information new;
+    if(file != NULL)
+    {
+        fread(&new , sizeof(commit_information) , 1 , file);
+        if(new . commit_hash != *HEAD)
+        {
+            READ_ONLY_ERROR
+            return ERROR;
+        }
+        fclose(file);
+    }
+    free(path);
     srand((unsigned int) current_commit -> commit_time);
     current_commit -> commit_hash = abs(rand() % (2147483647));
     *HEAD = current_commit -> commit_hash;
-    free(path);
     path = NewGit_finder();
     strcat(path , "/.NewGit/Branches/");
     strcat(path , current_branch);
@@ -67,7 +84,7 @@ int add_commit(char* current_branch , char* massage , int* HEAD)
     free(path);
     path = NewGit_finder();
     strcat(path , "/.NewGit/stageLog.txt");
-    FILE* file = fopen(path , "r");
+    file = fopen(path , "r");
     char word[MAX_WORD_LENGTH];
     count = 0;
     while(fgets(word , MAX_WORD_LENGTH , file))
@@ -75,11 +92,20 @@ int add_commit(char* current_branch , char* massage , int* HEAD)
         count++;
     }
     current_commit -> commit_number = count;
+    fclose(file);
     remove(path);
     free(path);
     path = NewGit_finder();
     strcat(path , "/.NewGit/commitLog.txt");
     file = fopen(path , "a");
+    fwrite(current_commit , sizeof(commit_information) , 1 , file);
+    fclose(file);
+    free(path);
+    path = NewGit_finder();
+    strcat(path , "/.NewGit/Branches/");
+    strcat(path , current_branch);
+    strcat(path , "/commitHEAD.txt");
+    file = fopen(path , "w");
     fwrite(current_commit , sizeof(commit_information) , 1 , file);
     fclose(file);
     free(current_commit);

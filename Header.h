@@ -55,6 +55,9 @@
 #define SHORTCUT_EXISTENCE_ERROR puts("You have entered a shortcut that does not exist!");
 #define LACK_OF_COMMIT puts("You haven't committed anything yet!");
 #define BRANCH_EXISTENCE_ERROR puts("You have entered a branch that does not exist!");
+#define STAGE_IS_NOT_EMPTY_ERROR puts("Stagging area is not empty!");
+#define READ_ONLY_ERROR puts("You have checked out to a commit , so you cann't add or commit!");
+#define COMMIT_EXISTENCE_ERROR puts("You have entered a commit that does not exist!");
 
 //Massages:
 #define SUCCESS_MASSAGE(word) printf("%s is done successfully!\n", word);
@@ -89,6 +92,7 @@ struct HEAD_information
 {
     int HEAD;
     char branch_name[MAX_BRANCH_NAME];
+    int read_only;
 };
 struct massage_information
 {
@@ -149,3 +153,6 @@ int log_author(char*);
 int log_time_since(time_t);// YYYY/MM/DD
 int log_time_before(time_t);// YYYY/MM/DD
 int log_word(char*);
+//Checkout:
+int checkout(char* , HEAD_information*);
+int checkout_commit_hash(HEAD_information*);

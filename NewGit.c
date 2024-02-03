@@ -1,11 +1,12 @@
 #include "Header.h"
 
-//Default branch:
-char branch_name[MAX_BRANCH_NAME] = "master";
-int HEAD;
-
 int main(int argc , char** argv)
 {
+    //Default branch:
+    HEAD_information* here = (HEAD_information*) malloc(sizeof(HEAD_information));
+    strcpy(here -> branch_name , "master");
+    here -> HEAD = -2;
+    here -> read_only = 0;
     char* path = NewGit_finder();
     if(path != NULL)
     {
@@ -16,8 +17,9 @@ int main(int argc , char** argv)
             HEAD_information new;
             if(fread(&new , sizeof(HEAD_information) , 1 , file_HEAD) == 1)
             {
-                HEAD = new . HEAD;
-                strcpy(branch_name , new . branch_name);
+                here -> HEAD = new . HEAD;
+                here -> read_only = new . read_only;
+                strcpy(here -> branch_name , new . branch_name);
             }
         }
     }
@@ -82,6 +84,11 @@ int main(int argc , char** argv)
     {
         if(strcmp(argv[2] , "-f") == 0)
         {
+            if(here -> read_only == -1)
+            {
+                READ_ONLY_ERROR
+                return ERROR;
+            }
             for(int i = 0 ; i < argc - 3 ; i++)
             {
                 if(opendir(argv[i + 3]) == NULL)
@@ -119,12 +126,13 @@ int main(int argc , char** argv)
                 return SUCCEED;
             }
         }
-        else if(strcmp(argv[2] , "-redo") == 0)
-        {
-            
-        }
         else if(argc == 3)
         {
+            if(here -> read_only == -1)
+            {
+                READ_ONLY_ERROR
+                return ERROR;
+            }
             if(opendir(argv[2]) == NULL)
             {
                 if(stage_file(argv[2]) == ERROR)
@@ -259,7 +267,7 @@ int main(int argc , char** argv)
                 DIRECTORY_OPENING_ERROR
                 return ERROR;
             }
-            if(branch_maker(branch_name , HEAD , argv[2] , current_direcotry) == ERROR)
+            if(branch_maker(here -> branch_name , here -> HEAD , argv[2] , current_direcotry) == ERROR)
             {
                 FAIL_MASSAGE("Making branch")
                 return ERROR;
@@ -290,15 +298,12 @@ int main(int argc , char** argv)
                 }
                 else
                 {
-                    if(add_commit(branch_name , argv[3] , &HEAD) == SUCCEED)
+                    if(add_commit(here -> branch_name , argv[3] , &(here -> HEAD)) == SUCCEED)
                     {
                         char* path = NewGit_finder();
                         strcat(path , "/.NewGit/HEADInformation.txt");
                         FILE* file = fopen(path , "w");
-                        HEAD_information new;
-                        new . HEAD = HEAD;
-                        strcpy(new . branch_name , branch_name);
-                        fwrite(&new , sizeof(HEAD_information) , 1 , file);
+                        fwrite(here , sizeof(HEAD_information) , 1 , file);
                         return SUCCEED;
                     }
                     else
@@ -349,15 +354,12 @@ int main(int argc , char** argv)
                         SHORTCUT_EXISTENCE_ERROR
                         return ERROR;
                     }
-                    if(add_commit(branch_name , current_shortcut . massage , &HEAD) == SUCCEED)
+                    if(add_commit(here -> branch_name , current_shortcut . massage , &(here -> HEAD)) == SUCCEED)
                     {
                         char* path = NewGit_finder();
                         strcat(path , "/.NewGit/HEADInformation.txt");
                         FILE* file = fopen(path , "w");
-                        HEAD_information new;
-                        new . HEAD = HEAD;
-                        strcpy(new . branch_name , branch_name);
-                        fwrite(&new , sizeof(HEAD_information) , 1 , file);
+                        fwrite(here , sizeof(HEAD_information) , 1 , file);
                         return SUCCEED;
                     }
                     else
@@ -606,6 +608,153 @@ int main(int argc , char** argv)
                     return SUCCEED;
                 }
             }    
+        }
+    }
+    else if(strcmp(argv[1] , "checkout") == 0)
+    {
+        if(argc == 3)
+        {
+            if(('0' <= argv[2][0]) && ('9' >= argv[2][0]))
+            {
+                HEAD_information temporary;
+                int commit_hash = atoi(argv[2]);
+                char* path = NewGit_finder();
+                if(path == NULL)
+                {
+                    NewGit_EXISTENCE_ERROR
+                    return ERROR;
+                }
+                strcat(path , "/.NewGit/");
+                strcat(path , "commitLog.txt");
+                FILE* file = fopen(path , "r");
+                commit_information current_commit;
+                free(path);
+                if(file == NULL)
+                {
+                    LACK_OF_COMMIT
+                    return ERROR;
+                }
+                else
+                {
+                    int flag = 0;
+                    while(fread(&current_commit , sizeof(commit_information) , 1 , file) == 1)
+                    {
+                        if(current_commit . commit_hash == commit_hash)
+                        {
+                            flag = 1;
+                            break;
+                        }
+                    }
+                    if(flag == 0)
+                    {
+                        COMMIT_EXISTENCE_ERROR
+                        return ERROR;
+                    }
+                    else
+                    {
+                        temporary . HEAD = current_commit . commit_hash;
+                        strcpy(temporary . branch_name , current_commit . commit_branch);
+                    }
+                }
+                fclose(file);
+                here -> read_only = -1;
+                path = NewGit_finder();
+                strcat(path , "/.NewGit/HEADInformation.txt");
+                file = fopen(path , "w");
+                fwrite(here , sizeof(HEAD_information) , 1 , file);
+                fclose(file);
+                free(path);
+                if(checkout_commit_hash(&temporary) != SUCCEED)
+                {
+                    here -> read_only = 0;
+                    path = NewGit_finder();
+                    strcat(path , "/.NewGit/HEADInformation.txt");
+                    file = fopen(path , "w");
+                    fwrite(here , sizeof(HEAD_information) , 1 , file);
+                    fclose(file);
+                    free(path);
+                    FAIL_MASSAGE("Checking out")
+                    return ERROR;
+                }
+            }
+            else if(strcmp(argv[2] , "HEAD") == 0)
+            {
+                if(checkout(here -> branch_name , here) != SUCCEED)
+                {
+                    FAIL_MASSAGE("Checking out")
+                    return ERROR;
+                }
+            }
+            else
+            {
+                if(checkout(argv[2] , here) != SUCCEED)
+                {
+                    FAIL_MASSAGE("Checking out")
+                    return ERROR;
+                }
+            }
+        }
+        else if(argc ==5)
+        {
+            if(strcmp(argv[2] , "HEAD") == 0)
+            {
+                if(strcmp(argv[3] , "-n") == 0)
+                {
+                    int n = atoi(argv[4]);
+                    n++;
+                    char* path = NewGit_finder();
+                    if(path == NULL)
+                    {
+                        NewGit_EXISTENCE_ERROR
+                        return ERROR;
+                    }
+                    strcat(path , "/.NewGit/commitLog.txt");
+                    FILE* file = fopen(path , "r");
+                    commit_information all[MAX_COMMIT_COUNT];
+                    int index = 0;
+                    while(fread(&(all[index]) , sizeof(commit_information) , 1 , file) == 1)
+                    {
+                        if(strcmp(here -> branch_name , all[index] . commit_branch) == 0)
+                        {
+                            index++;
+                        }
+                    } 
+                    fclose(file);
+                    index -= n;
+                    HEAD_information temporary;
+                    temporary . HEAD = all[index] . commit_hash;
+                    strcpy(temporary . branch_name , all[index] . commit_branch);
+                    here -> read_only = -1;
+                    path = NewGit_finder();
+                    strcat(path , "/.NewGit/HEADInformation.txt");
+                    file = fopen(path , "w");
+                    fwrite(here , sizeof(HEAD_information) , 1 , file);
+                    fclose(file);
+                    free(path);
+                    if(checkout_commit_hash(&temporary) != SUCCEED)
+                    {
+                        here -> read_only = 0;
+                        path = NewGit_finder();
+                        strcat(path , "/.NewGit/HEADInformation.txt");
+                        file = fopen(path , "w");
+                        fwrite(here , sizeof(HEAD_information) , 1 , file);
+                        fclose(file);
+                        free(path);
+                        FAIL_MASSAGE("Checking out")
+                        return ERROR;
+                    }
+                }
+            }
+            else
+            {
+                INVALID_INPUT_ERROR
+                return ERROR;
+            }
+        }
+        else
+        {
+            INVALID_INPUT_ERROR
+            return ERROR;
         }
     }
 }
