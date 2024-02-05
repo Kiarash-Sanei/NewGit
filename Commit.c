@@ -83,16 +83,20 @@ int add_commit(char* current_branch , char* massage , int* HEAD)
     free(stage_path);
     free(path);
     path = NewGit_finder();
-    strcat(path , "/.NewGit/stageLog.txt");
-    file = fopen(path , "r");
-    char word[MAX_WORD_LENGTH];
-    count = 0;
-    while(fgets(word , MAX_WORD_LENGTH , file))
+    strcat(path , "/.NewGit/Stage");
+    stage = opendir(path);
+    entry = readdir(stage);
+    count = -2;
+    while(entry != NULL)
     {
         count++;
+        entry = readdir(stage);
     }
     current_commit -> commit_number = count;
-    fclose(file);
+    closedir(stage);
+    free(path);
+    path = NewGit_finder();
+    strcat(path , "/.NewGit/stageLog.txt");
     remove(path);
     free(path);
     path = NewGit_finder();

@@ -27,6 +27,10 @@
 #define MAX_ALIAS_COMMAND_LENGHT 100
 #define MAX_SETTING_COUNT 100
 #define MAX_COMMIT_COUNT 100
+#define MAX_TAG_NAME_LENGTH 100
+#define MAX_TAG_MASSAGE_LENGTH 100
+#define MAX_TAG_COUNT 100
+#define MAX_LINE_COUNT 100
 #define ERROR -1
 #define SUCCEED 1
 #define FAILED 0
@@ -58,6 +62,8 @@
 #define STAGE_IS_NOT_EMPTY_ERROR puts("Stagging area is not empty!");
 #define READ_ONLY_ERROR puts("You have checked out to a commit , so you cann't add or commit!");
 #define COMMIT_EXISTENCE_ERROR puts("You have entered a commit that does not exist!");
+#define TAG_EXISTENCE_ERROR puts("You have entered a tag that does not exist!");
+#define LINES_ARE_NOT_EQUAL puts("The count of line to diff are not equal!");
 
 //Massages:
 #define SUCCESS_MASSAGE(word) printf("%s is done successfully!\n", word);
@@ -65,7 +71,10 @@
 #define EXISTENCE_ERROR_MASSAGE(word) printf("%s does not exist in the current directory!\n", word);
 #define STAGE_EXISTENCE_ERROR_MASSAGE(word) printf("%s does not exist in the stagging area!\n", word);
 
-//Define Functions:
+//Colors:
+#define ANSI_COLOR_MAGENTA "\x1b[35m"
+#define ANSI_COLOR_CYAN "\x1b[36m"
+#define ANSI_COLOR_RESET "\x1b[0m"
 
 //Structs:
 struct user
@@ -99,6 +108,18 @@ struct massage_information
     char massage[MAX_COMMIT_MESSAGE_LENGTH];
     char shortcut[MAX_ALIAS_LENGHT];
 };
+struct tag
+{
+    time_t commit_time;
+    int commit_hash;
+    char commit_massage[MAX_COMMIT_MESSAGE_LENGTH];
+    char commit_user_name[MAX_USER_NAME_LENGTH];
+    char commit_user_email[MAX_USER_EMAIL_LENGTH];
+    char commit_branch[MAX_BRANCH_NAME];
+    int commit_number;
+    char tag_name[MAX_TAG_NAME_LENGTH];
+    char tag_massage[MAX_TAG_MASSAGE_LENGTH];
+};
 
 //Typedefs:
 typedef struct dirent dirent;
@@ -108,6 +129,7 @@ typedef struct user user;
 typedef struct alias alias;
 typedef struct HEAD_information HEAD_information;
 typedef struct massage_information massage_information;
+typedef struct tag tag;
 
 //Prototypes:
 //General:
@@ -156,3 +178,16 @@ int log_word(char*);
 //Checkout:
 int checkout(char* , HEAD_information*);
 int checkout_commit_hash(HEAD_information*);
+//Revert:
+//no new function is needed
+//Tag:
+int tag_maker(commit_information , char* , char*);
+int tag_remaker(commit_information , char* , char*);
+int tag_organizer();
+int all_tag_shower();
+int tag_shower(char*);
+//Diff:
+int diff_file(char* , char* , int , int , int , int);
+int diff_commit(commit_information , commit_information);
+//Merge:
+int merge(char* , char*);
