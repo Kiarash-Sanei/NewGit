@@ -184,7 +184,7 @@ int log_time_since(time_t since)
     int count = 1;
     for(int i = index -1 ; i > -1 ; i--)
     {
-        if(difftime(all[i] . commit_time , since) <= 0)
+        if(difftime(all[i] . commit_time , since) >= 0)
         {
             printf("commit %d:\n" , count);
             printf("\tcommit time : %s" , ctime(&(all[i] . commit_time)));
@@ -220,7 +220,7 @@ int log_time_before(time_t before)
     int count = 1;
     for(int i = index -1 ; i > -1 ; i--)
     {
-        if(difftime(all[i] . commit_time , before) >= 0)
+        if(difftime(all[i] . commit_time , before) <= 0)
         {
             printf("commit %d:\n" , count);
             printf("\tcommit time : %s" , ctime(&(all[i] . commit_time)));

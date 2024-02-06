@@ -63,7 +63,7 @@
 #define READ_ONLY_ERROR puts("You have checked out to a commit , so you cann't add or commit!");
 #define COMMIT_EXISTENCE_ERROR puts("You have entered a commit that does not exist!");
 #define TAG_EXISTENCE_ERROR puts("You have entered a tag that does not exist!");
-#define LINES_ARE_NOT_EQUAL puts("The count of line to diff are not equal!");
+#define MERGE_EXISTENCE_ERROR puts("There was merge in the past!");
 
 //Massages:
 #define SUCCESS_MASSAGE(word) printf("%s is done successfully!\n", word);

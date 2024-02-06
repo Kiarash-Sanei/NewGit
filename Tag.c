@@ -182,5 +182,5 @@ int tag_shower(char* tag_name)
     printf("\tcommit user name : %s\n" , find . commit_user_name);
     printf("\tcommit user email : %s\n" , find . commit_user_email);
     printf("\tcommit number : %d\n" , find . commit_number);
-    printf("\tcommit time : %s\n" , ctime(find . commit_time));
+    printf("\tcommit time : %s" , ctime(&(find . commit_time)));
 }

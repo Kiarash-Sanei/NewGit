@@ -73,10 +73,21 @@ int checkout(char* branch_name , HEAD_information* here)
         char* path_2 = NewGit_finder();
         while(entry != NULL)
         {
-            if((strcmp(entry -> d_name ,  ".") != 0) && (strcmp(entry -> d_name , "..") != 0))
+            if((entry -> d_type == DT_DIR) && (strcmp(entry -> d_name ,  ".") != 0) && (strcmp(entry -> d_name , "..") != 0))
             {
                 char command[MAX_COMMAND_LENGTH];
                 strcpy(command , "cp -rf ");
+                strcat(command , path);
+                strcat(command , "/");
+                strcat(command , entry -> d_name);
+                strcat(command , " ");
+                strcat(command , path_2);
+                system(command);
+            }
+            else if(entry -> d_type == DT_REG)
+            {
+                char command[MAX_COMMAND_LENGTH];
+                strcpy(command , "cp -f ");
                 strcat(command , path);
                 strcat(command , "/");
                 strcat(command , entry -> d_name);
@@ -134,10 +145,21 @@ int checkout_commit_hash(HEAD_information* here)
     char* path_2 = NewGit_finder();
     while(entry != NULL)
     {
-        if((strcmp(entry -> d_name ,  ".") != 0) && (strcmp(entry -> d_name , "..") != 0))
+        if((entry -> d_type == DT_DIR) && (strcmp(entry -> d_name ,  ".") != 0) && (strcmp(entry -> d_name , "..") != 0))
         {
             char command[MAX_COMMAND_LENGTH];
             strcpy(command , "cp -rf ");
+            strcat(command , path);
+            strcat(command , "/");
+            strcat(command , entry -> d_name);
+            strcat(command , " ");
+            strcat(command , path_2);
+            system(command);
+        }
+        else if(entry -> d_type == DT_REG)
+        {
+            char command[MAX_COMMAND_LENGTH];
+            strcpy(command , "cp -f ");
             strcat(command , path);
             strcat(command , "/");
             strcat(command , entry -> d_name);

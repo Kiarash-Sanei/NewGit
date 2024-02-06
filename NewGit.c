@@ -609,6 +609,21 @@ int main(int argc , char** argv)
                 }
             }    
         }
+        else if(strcmp(argv[2] , "-search") == 0)
+        {
+            if(argc == 4)
+            {
+                if(log_word(argv[3]) == ERROR)
+                {
+                    FAIL_MASSAGE("Showing log")
+                    return ERROR;
+                }
+                else
+                {
+                    return SUCCEED;
+                }
+            }    
+        }
     }
     else if(strcmp(argv[1] , "checkout") == 0)
     {
@@ -676,6 +691,7 @@ int main(int argc , char** argv)
                     FAIL_MASSAGE("Checking out")
                     return ERROR;
                 }
+                return SUCCEED;
             }
             else if(strcmp(argv[2] , "HEAD") == 0)
             {
@@ -684,6 +700,7 @@ int main(int argc , char** argv)
                     FAIL_MASSAGE("Checking out")
                     return ERROR;
                 }
+                return SUCCEED;
             }
             else
             {
@@ -692,6 +709,7 @@ int main(int argc , char** argv)
                     FAIL_MASSAGE("Checking out")
                     return ERROR;
                 }
+                return SUCCEED;
             }
         }
         else if(argc ==5)
@@ -743,6 +761,7 @@ int main(int argc , char** argv)
                         FAIL_MASSAGE("Checking out")
                         return ERROR;
                     }
+                    return SUCCEED;
                 }
             }
             else
@@ -791,6 +810,11 @@ int main(int argc , char** argv)
                 HEAD_information temp;
                 temp . HEAD = all[index] . commit_hash;
                 strcpy(temp . branch_name , all[index] . commit_branch);
+                if(strchr(temp . branch_name , '+') != NULL)
+                {
+                    MERGE_EXISTENCE_ERROR
+                    return ERROR;
+                }
                 if(checkout_commit_hash(&temp) != SUCCEED)
                 {
                     FAIL_MASSAGE("Checking out")
@@ -879,6 +903,11 @@ int main(int argc , char** argv)
                     }
                 }
                 fclose(file);
+                if(strchr(temporary . branch_name , '+') != NULL)
+                {
+                    MERGE_EXISTENCE_ERROR
+                    return ERROR;
+                }
                 if(checkout_commit_hash(&temporary) != SUCCEED)
                 {
                     return ERROR;
@@ -1449,7 +1478,7 @@ int main(int argc , char** argv)
             }
             else if(argc == 9)
             {
-                if((strcmp(argv[4] , "-m") == 0) && (strcmp(argv[6] , "-c") == 0) && (strcmp(argv[8] , "-f")))
+                if((strcmp(argv[4] , "-m") == 0) && (strcmp(argv[6] , "-c") == 0) && (strcmp(argv[8] , "-f") == 0))
                 {
                     char* path = NewGit_finder();
                     if(path == NULL)
@@ -1480,7 +1509,7 @@ int main(int argc , char** argv)
                     tag_remaker(current_commit , argv[5] , argv[3]);
                     return SUCCEED;
                 }
-                else if((strcmp(argv[4] , "-c") == 0) && (strcmp(argv[6] , "-m") == 0) && (strcmp(argv[8] , "-f")))
+                else if((strcmp(argv[4] , "-c") == 0) && (strcmp(argv[6] , "-m") == 0) && (strcmp(argv[8] , "-f") == 0))
                 {
                     char* path = NewGit_finder();
                     if(path == NULL)
@@ -1621,6 +1650,7 @@ int main(int argc , char** argv)
                     return ERROR;
                 }
                 diff_commit(commit_1 , commit_2);
+                return SUCCEED;
             }
             else
             {

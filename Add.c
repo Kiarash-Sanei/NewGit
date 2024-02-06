@@ -132,10 +132,9 @@ int show(int depth , char* current_directory)
             {
                 char temporary_directory[MAX_DIRECTORY_NAME_LENGTH];
                 strcpy(temporary_directory , current_directory);
-                strcat(current_directory , "/");
-                strcat(current_directory , entry -> d_name);
-                show(depth - 1 , current_directory);
-                strcpy(current_directory , temporary_directory);
+                strcat(temporary_directory , "/");
+                strcat(temporary_directory , entry -> d_name);
+                show(depth - 1 , temporary_directory);
             }
         }
         entry = readdir(directory);

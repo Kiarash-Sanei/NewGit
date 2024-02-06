@@ -76,8 +76,10 @@ int merge(char* branch_name_1 , char* branch_name_2)
                 char temporary_1[MAX_DIRECTORY_NAME_LENGTH];
                 char temporary_2[MAX_DIRECTORY_NAME_LENGTH];
                 strcpy(temporary_1 , path_1);
+                strcat(temporary_1 , "/");
                 strcat(temporary_1 , list_1[i]);
                 strcpy(temporary_2 , path_2);
+                strcat(temporary_2 , "/");
                 strcat(temporary_2 , list_2[j]);
                 diff_file(temporary_1 , temporary_2 , 1 , 100 , 1 , 100);
                 flag = 1;
@@ -87,8 +89,9 @@ int merge(char* branch_name_1 , char* branch_name_2)
         {
             char temporary_1[MAX_DIRECTORY_NAME_LENGTH];
             strcpy(temporary_1 , path_1);
+            strcat(temporary_1 , "/");
             strcat(temporary_1 , list_1[i]);
-            copy_file(path , temporary_1);
+            copy_directory(path , temporary_1);
         }
     }
     for(int i = 0 ; i < index_2 ; i++)
@@ -105,8 +108,9 @@ int merge(char* branch_name_1 , char* branch_name_2)
         {
             char temporary_2[MAX_DIRECTORY_NAME_LENGTH];
             strcpy(temporary_2 , path_2);
+            strcat(temporary_2 , "/");
             strcat(temporary_2 , list_2[i]);
-            copy_file(path , temporary_2);
+            copy_directory(path , temporary_2);
         }
     }
     return SUCCEED;
